@@ -5,9 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const noButton = document.getElementById('noButton');
     const responseMessage = document.getElementById('responseMessage');
     const backgroundMusic = document.getElementById('backgroundMusic');
+    
 
     let currentCardIndex = 0;
-
+    let currentYesScale = 1.0; // <-- YENİ EKLENECEK SATIR (1.0 = %100 boyut)
     // İlk kartı göster (HTML'de hidden class'ı olmadığından zaten görünecek)
     // İlk kartın butonu için olay dinleyicisi ekle
     if (nextButtons.length > 0) {
@@ -31,39 +32,68 @@ document.addEventListener('DOMContentLoaded', () => {
         responseMessage.classList.add('visible');
         hideAllCardsExceptMessage();
         backgroundMusic.volume = 0.5; // Müziğin sesini kıs
+        yesButton.style.display = 'none';
+        noButton.style.display = 'none';
     });
 
    noButton.addEventListener('click', (event) => {
         event.preventDefault();
 
-        // --- YENİ EKLENEN SATIR ---
-        // Butonu .container'ın dışına, doğrudan body'e taşıyoruz.
-        // Bu, onu 'overflow: hidden' kısıtlamasından kurtarır.
+        // --- YENİ KOD: 'Evet' BUTONUNU DA ÜST KATMANA TAŞI ---
+        
+        // 'Evet' butonunun 'position' stilini kontrol et
+        if (yesButton.style.position !== 'absolute') {
+            // Eğer 'absolute' değilse, bu 'Hayır'a ilk tıklamadır.
+            
+            // 1. 'Evet' butonunun ekrandaki mevcut konumunu al
+            const yesRect = yesButton.getBoundingClientRect();
+
+            // 2. 'Evet' butonunu da body'e taşı
+            document.body.appendChild(yesButton);
+            
+            // 3. Konumunu 'absolute' yap ve z-index ile en üste al
+            yesButton.style.position = 'absolute';
+            yesButton.style.zIndex = '1000'; // 'Evet' butonu üstte
+            
+            // 4. Aldığımız konuma sabitle (böylece yerinden oynamaz)
+            yesButton.style.top = yesRect.top + 'px';
+            yesButton.style.left = yesRect.left + 'px';
+            
+            // 5. Büyümenin merkezden olmasını garantile
+            yesButton.style.transformOrigin = 'center center';
+        }
+        // --- YENİ KOD BİTTİ ---
+
+
+        // --- 'HAYIR' BUTONU IŞINLANMA KODU (Bu kısım zaten vardı) ---
+        
+        // 'Hayır' butonunu body'e taşı
         document.body.appendChild(noButton);
-        // --- BİTTİ ---
-
-        // 1. Butonun konumlandırmasını 'absolute' yapıyoruz.
         noButton.style.position = 'absolute';
+        noButton.style.zIndex = '1001'; // 'Hayır' butonu 'Evet'in de üstünde
 
-        // 2. Tarayıcı penceresinin (görünen alanın) genişliğini ve yüksekliğini alıyoruz.
+        // ... (viewportWidth, randomX vb. hesaplamalar)
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-
-        // 3. Butonun kendi genişliğini ve yüksekliğini alıyoruz.
         const buttonWidth = noButton.offsetWidth;
         const buttonHeight = noButton.offsetHeight;
-
-        // 4. Butonun gidebileceği maksimum X ve Y koordinatlarını hesaplıyoruz.
         const maxX = viewportWidth - buttonWidth;
         const maxY = viewportHeight - buttonHeight;
-
-        // 5. 0 ile maksimum değerler arasında rastgele X (left) ve Y (top) değerleri üretiyoruz.
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
 
-        // 6. Butonu bu rastgele koordinatlara "ışınlıyoruz".
+        // 'Hayır' butonunu ışınla
         noButton.style.left = randomX + 'px';
         noButton.style.top = randomY + 'px';
+        
+        
+        // --- 'EVET' BUTONU BÜYÜTME KODU (Bu kısım da zaten vardı) ---
+        
+        // 'Evet' butonunun ölçeğini %20 (0.2) büyüt.
+        currentYesScale += 0.6; 
+        
+        // Yeni ölçeği 'Evet' butonuna CSS 'transform' özelliği ile uygula.
+        yesButton.style.transform = `scale(${currentYesScale})`;
     });
 
     function showNextCard() {
