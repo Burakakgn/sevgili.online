@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     yesButton.addEventListener('click', () => {
-        responseMessage.innerHTML = "🎉İyi ki varsın 🎉";
+        responseMessage.innerHTML = "🎉Ya Sen Bitanesiiinnn 🎉";
         responseMessage.classList.remove('hidden');
         responseMessage.classList.add('visible');
         hideAllCardsExceptMessage();
@@ -116,4 +116,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.querySelector('h1').classList.add('hidden'); // Başlığı da gizle
     }
+
 });
