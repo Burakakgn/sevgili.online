@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürpriz Sayfa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        
+        <div class="card" id="card1">
+            <h1>Sürpriz</h1>
+            <button class="next-button">Devam Et</button>
+        </div>
+
+        <div class="card hidden" id="card2">
+            <h2>Birlikte ne çok anımız oldu, değil mi?</h2>
+            <button class="next-button">Evet</button>
+        </div>
+
+        <div class="card hidden" id="card3">
+            <h2>Her anın benim için çok değerliydi ve öyle kalacak.</h2>
+            <button class="next-button">Arayış ne burda?</button>
+        </div>
+
+        <div class="card hidden" id="card4">
+            <h2>Hayatımı seninle geçirmek istiyorum...</h2>
+            <h3>Benimle sevgili olur musun?</h3>
+            <div class="options">
+                <button id="yesButton">😆 Evet 😆</button>
+                <button id="noButton">😞 Hayır 😞</button>
+            </div>
+        </div>
+
+        <div class="message hidden" id="responseMessage">
+            </div>
+
+    </div>
+
+    <audio id="backgroundMusic" src="sarki.mp3" loop></audio> 
+    <script src="script.js"></script>
+</body>
+</html>
