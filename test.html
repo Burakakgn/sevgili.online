@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Kalp Oluşturma Animasyonu (Kalın Çizgi)</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #testButton {
+            position: absolute; top: 20px; left: 50%;
+            transform: translateX(-50%); padding: 10px 20px;
+            font-size: 16px; cursor: pointer; z-index: 100;
+            background: #fff; color: #000; border: none; border-radius: 5px;
+        }
+        
+        /* Tüm kalp yollarının ortak stili */
+        .heartPath {
+            fill: none; 
+            stroke: url(#heartGradient); 
+            
+            /* --- DEĞİŞTİ: Çizgi kalınlığı 5'ten 8'e çıktı --- */
+            stroke-width: 8; /* <-- DEĞİŞTİ */
+            
+            stroke-linecap: round;
+            
+            /* NEON EFEKTİ (Daha kalın olduğu için parlamayı biraz artırdık) */
+            filter: 
+                drop-shadow(0 0 10px #FF0055) /* 8px -> 10px */
+                drop-shadow(0 0 5px #FF0055);  /* 4px -> 5px */
+            
+            /* Dönüşlerin SVG'nin merkezinden olmasını sağlar */
+            transform-origin: 256px 256px; /* viewBox'un tam merkezi (512/2) */
+        }
+    </style>
+</head>
+<body>
+
+    <button id="testButton">Kalbi Oluştur!</button>
+
+    <svg id="svgContainer" viewBox="0 0 512 512">
+        <defs>
+            <linearGradient id="heartGradient" gradientTransform="rotate(90)">
+                <stop offset="0%"   stop-color="#FF80AB" />
+                <stop offset="50%"  stop-color="#FF0055" />
+                <stop offset="100%" stop-color="#D70040" />
+            </linearGradient>
+        </defs>
+        
+        <path id="heartPathReference" class="heartPath"
+            d="M352.92 80C288 80 256 144 256 144S224 80 159.08 80C107.4 80 64 123.4 64 175.08 64 272.2 160 368 256 432c96-64 192-159.8 192-256.92C448 123.4 404.6 80 352.92 80z"
+            opacity="0"
+        />
+    </svg>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const testButton = document.getElementById('testButton');
+            const svgContainer = document.getElementById('svgContainer');
+            const heartPathReference = document.getElementById('heartPathReference');
+            
+            const NUM_CLONES = 75; 
+            let allClonedHearts = []; 
+
+            // 1. Klonla
+            for (let i = 0; i < NUM_CLONES; i++) {
+                const clone = heartPathReference.cloneNode(true);
+                clone.removeAttribute('id');
+                clone.setAttribute('opacity', 1); 
+                svgContainer.appendChild(clone);
+                allClonedHearts.push(clone);
+            }
+
+            // 2. Başlangıç halini ayarla
+            gsap.set(allClonedHearts, {
+                x: (i) => (Math.random() - 0.5) * 1000, 
+                y: (i) => (Math.random() - 0.5) * 1000, 
+                rotation: (i) => (Math.random() - 0.5) * 720, 
+                scale: 0,   
+                opacity: 0  
+            });
+
+            // 3. Butona tıkla
+            testButton.addEventListener('click', () => {
+                
+                console.log("Butona tıklandı, KALIN klonlar birleşiyor...");
+                testButton.style.display = 'none';
+
+                gsap.to(allClonedHearts, {
+                    duration: 2.5,
+                    x: 0,
+                    y: 0,
+                    rotation: 0,
+                    scale: 1,
+                    opacity: 1,
+                    stagger: 0.02, 
+                    ease: "power3.inOut"
+                });
+            }); 
+        }); 
+    </script>
+</body>
+</html>
