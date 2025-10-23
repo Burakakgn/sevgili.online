@@ -1,0 +1,281 @@
+/* --- TEMEL AYARLAR --- */
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f7d9d9, #e0b0d5);
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
+.main-container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+.mektup-kayboluyor {
+    opacity: 0;
+    transform: scale(0.95); /* Solarken hafifçe küçülsün, daha şık durur */
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    border: none;
+}
+h1 {
+    color: #4b0082; 
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* --- GİZLEME SINIFI --- */
+.hidden {
+    display: none !important; /* !important ekledik, garanti olsun */
+   
+}
+
+/* --- YENİ MEKTUP STİLLERİ (X YAPI) --- */
+.letter-container {
+    width: 100%;
+    max-width: 600px; /* Mektubun genişliği */
+    height: 400px; /* Mektubun yüksekliği */
+    background-color: #fffef5; /* Kağıt rengi */
+    border: 1px solid #ddd;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin: 30px auto;
+    position: relative; /* EN ÖNEMLİ KURAL */
+    /* overflow: hidden; Dışarı taşan yazıların görünmemesi için */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, height 0.5s ease-out, margin 0.5s ease-out;
+}
+.flap {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    cursor: pointer;
+    z-index: 10; /* Yazıların (9) BİR ÜSTÜNDE */
+    
+    /* Tıklandığında yavaşça kaybolması için */
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+/* Üst Kapak */
+.flap.top {
+    top: 0;
+    left: 0;
+    border-width: 190px 300px 0 300px; /* (Yükseklik/2, Genişlik/2) */
+    border-color: #f0e6d6 transparent transparent transparent; /* Mektup Rengi */
+}
+/* Alt Kapak */
+.flap.bottom {
+    bottom: 0;
+    left: 0;
+    border-width: 0 300px 190px 300px;
+    border-color: transparent transparent#f0e6d6 transparent; /* Mektup Rengi */
+}
+/* Sol Kapak */
+.flap.left {
+    top: 0;
+    left: 0;
+    border-width: 200px 0 200px 290px;
+    border-color: transparent transparent transparent #f0e6d6; /* Mektup Rengi */
+}
+/* Sağ Kapak */
+.flap.right {
+    top: 0;
+    right: 0;
+    border-width: 200px 290px 200px 0;
+    border-color: transparent #f0e6d6 transparent transparent; /* Mektup Rengi */
+}
+/* NOT: Mektup boyutunu (600x400) değiştirirsen, buradaki 300px ve 200px değerlerini de (yarısı olarak) değiştirmelisin. */
+/* KAPAK AÇILMA ANİMASYONLARI */
+/* JS, tıklandığında bu sınıfları ekleyecek */
+
+.flap.open-top {
+    transform: scaleY(0); /* Dikey olarak %0'a küçült */
+    opacity: 0;
+    transform-origin: 50% 0; /* Küçülürken ÜST KENARA doğru çek */
+}
+.flap.open-bottom {
+    transform: scaleY(0); /* Dikey olarak %0'a küçült */
+    opacity: 0;
+    transform-origin: 50% 100%; /* Küçülürken ALT KENARA doğru çek */
+}
+.flap.open-left {
+    transform: scaleX(0); /* Yatay olarak %0'a küçült */
+    opacity: 0;
+    transform-origin: 0 50%; /* Küçülürken SOL KENARA doğru çek */
+}
+.flap.open-right {
+    transform: scaleX(0); /* Yatay olarak %0'a küçült */
+    opacity: 0;
+    transform-origin: 100% 50%; /* Küçülürken SAĞ KENARA doğru çek */
+}
+/* Hareket edecek 4 YAZI KUTUSU (KAPAKLARIN ALTINDA) */
+.prompt-text {
+    background-color: #dad0a3;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    position: absolute; 
+    z-index: 9; /* Kapakların (10) BİR ALTINDA */
+    
+    /* BAŞLANGIÇ POZİSYONU: Tam Orta */
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8); 
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+.prompt-text p {
+    font-family: "Georgia", serif;
+    font-size: 1.8em; 
+    color: #000033; 
+    margin: 0;
+}
+
+/* YAZILARIN ANİMASYONLU BİTİŞ POZİSYONLARI */
+.prompt-text.slide-up {
+    opacity: 1;
+    transform: translate(-50%, -200%) scale(1); /* Ortadan YUKARI */
+}
+.prompt-text.slide-right {
+    opacity: 1;
+    transform: translate(50%, -50%) scale(1); /* Ortadan SAĞA */
+}
+.prompt-text.slide-bottom {
+    opacity: 1;
+    transform: translate(-50%, 80%) scale(1); /* Ortadan AŞAĞI */
+}
+.prompt-text.slide-left {
+    opacity: 1;
+    transform: translate(-150%, -50%) scale(1); /* Ortadan SOLA */
+}
+
+/* --- FİNAL SORUSU VE BUTONLAR (Değişiklik yok) --- */
+.final-question {
+   position: absolute; 
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 900; /* Mektubun (10) ve yazıların (9) çok üstünde */
+
+/* Animasyonla belirsin (Anında değil) */
+opacity: 0; /* Başlangıçta görünmez (çünkü .hidden kalktı) */
+animation: fadeInSoru 0.5s ease-out 0.3s forwards; 
+/* (0.5s'de belir, mektup solmaya başladıktan 0.3s sonra başla) */
+
+/* Kendi stil kodların (eski kodların) */
+width: 90%; /* Ekranı kaplamasın */
+max-width: 600px; /* Çok büyümesin */
+padding: 30px;
+background: rgba(255, 255, 255, 0.9);
+border-radius: 20px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.final-question h2 {
+    font-size: 1.8em;
+}
+#question-options {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    /* YENİ EKLENECEK KODLAR: */
+    opacity: 0; /* Başlangıçta görünmez olsun */
+    transform: translateY(10px); /* Hafif aşağıda başlasın */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Yumuşak geçiş */
+}
+#question-options.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+#yesButton, #noButton {
+    background-color: #ff6f61; color: white; border: none;
+    padding: 12px 25px; border-radius: 30px; font-size: 1.5em;
+    cursor: pointer; margin: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform-origin: center center;
+}
+#yesButton { background-color: #4CAF50; }
+#noButton { background-color: #f44336; }
+.message {
+    background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;
+    padding: 20px; border-radius: 10px; margin-top: 30px;
+    font-size: 1.5em; font-weight: bold;
+}
+@keyframes fadeInSoru {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- ORTADAKİ KALP (FİLİGRAN) --- */
+
+.heart {
+    position: absolute;
+    width: 60px;  /* Kalbin ana boyutu */
+    height: 60px; /* Kalbin ana boyutu */
+    
+    /* Onu tam ortaya konumlandır */
+    top: 50%;
+    left: 50%;
+    
+    /* * Ortala (-%50), döndür (-45deg) ve hafifçe yukarı it (-10px) 
+     * (Çünkü "X" kapakların tam merkezi biraz altta kalabilir) 
+     */
+    transform: translate(-50%, -50%) rotate(-45deg); 
+    
+    /* Kapakların (10) ve yazıların (9) ALTINDA olsun */
+    z-index: 11; 
+    
+    /* Kalbin rengi (Soluk, yarı şeffaf pembe/kırmızı) */
+    background-color: rgb(255, 0, 0); 
+}
+
+/* Kalbin üstteki iki yuvarlak lobu */
+.heart::before,
+.heart::after {
+    content: "";
+    position: absolute;
+    width: 60px;  /* Ana boyutla aynı */
+    height: 60px; /* Ana boyutla aynı */
+    border-radius: 50%; /* Tam daire yap */
+    background-color: rgb(255, 0, 0); /* Ana renkle aynı */
+}
+
+/* Sol lob'u konumlandır */
+.heart::before {
+    top: -30px; /* Yüksekliğin yarısı kadar yukarı */
+    left: 0;
+}
+
+/* Sağ lob'u konumlandır */
+.heart::after {
+    top: 0;
+    left: 30px; /* Genişliğin yarısı kadar sağa */
+}
+/* --- 3D PARTİKÜL ANİMASYONU İÇİN EKLENDİ --- */
+#scene-canvas {
+    /* Başlangıçta tamamen gizli */
+    display: none;
+
+    /* Tüm ekranı kaplaması için */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* Diğer her şeyin (final-question vb.) ÜSTÜNDE görünmesi için */
+    z-index: 10000;
+
+    /* Arka planı (ihtimale karşı) */
+    background-color: #000;
+}
